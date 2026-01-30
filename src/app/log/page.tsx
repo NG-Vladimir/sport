@@ -3,7 +3,6 @@
 import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
 import { useProgress } from "@/context/ProgressContext";
 import { generate90DayPlan, getWorkoutForDate } from "@/lib/workoutPlan";
 import { ExerciseInput } from "@/components/ExerciseInput";
@@ -79,34 +78,26 @@ function LogContent() {
   if (!hydrated || !progress) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-2 border-neon-lime border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-lime-500 border-t-transparent" />
       </div>
     );
   }
 
   if (!workout) {
     return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="rounded-2xl border border-dark-border bg-dark-card p-8 text-center"
-      >
-        <p className="text-dark-muted">На эту дату нет тренировки в плане.</p>
-        <p className="mt-2 text-sm text-dark-muted">Выберите Пн, Ср или Пт.</p>
-      </motion.div>
+      <div className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-8 text-center text-gray-500">
+        <p>На эту дату нет тренировки.</p>
+        <p className="mt-2 text-sm">Пн, Ср, Пт — дни тренировок</p>
+      </div>
     );
   }
 
   if (saved || alreadyCompleted) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="rounded-2xl border border-neon-green/50 bg-dark-card p-8 text-center"
-      >
-        <p className="font-display text-xl font-bold text-neon-green">Тренировка засчитана</p>
-        <p className="mt-2 text-dark-muted">{workoutDate}</p>
-      </motion.div>
+      <div className="rounded-xl border border-green-500/40 bg-[#1a1a1a] p-8 text-center">
+        <p className="text-lg font-semibold text-green-400">Тренировка засчитана</p>
+        <p className="mt-2 text-sm text-gray-500">{workoutDate}</p>
+      </div>
     );
   }
 
@@ -121,21 +112,15 @@ function LogContent() {
   const progressValue = totalTarget ? Math.min(1, totalDone / totalTarget) : 0;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       <header>
-        <h1 className="font-display text-2xl font-bold uppercase text-white">
-          Лог тренировки
-        </h1>
-        <p className="mt-1 text-dark-muted">{workoutDate} · День {workout.dayNumber}</p>
+        <h1 className="text-xl font-bold text-white">Лог тренировки</h1>
+        <p className="mt-0.5 text-sm text-gray-500">{workoutDate} · День {workout.dayNumber}</p>
       </header>
 
       <ProgressBar
         value={progressValue}
-        label="Прогресс по повторениям"
+        label="Прогресс"
         showPercent={true}
         color="lime"
         height="md"
@@ -153,16 +138,15 @@ function LogContent() {
         ))}
       </div>
 
-      <motion.button
+      <button
         type="button"
         onClick={handleSave}
         disabled={buildCompletedSets().length === 0}
-        className="w-full rounded-xl bg-neon-lime py-4 font-display font-bold text-dark-bg disabled:opacity-50"
-        whileTap={{ scale: 0.98 }}
+        className="w-full rounded-lg bg-lime-500 py-4 font-semibold text-black disabled:opacity-50"
       >
         Сохранить тренировку
-      </motion.button>
-    </motion.div>
+      </button>
+    </div>
   );
 }
 
@@ -171,7 +155,7 @@ export default function LogPage() {
     <Suspense
       fallback={
         <div className="flex min-h-[60vh] items-center justify-center">
-          <div className="h-12 w-12 animate-spin rounded-full border-2 border-neon-lime border-t-transparent" />
+          <div className="h-10 w-10 animate-spin rounded-full border-2 border-lime-500 border-t-transparent" />
         </div>
       }
     >

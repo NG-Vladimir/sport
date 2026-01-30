@@ -1,9 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 interface ProgressBarProps {
-  value: number; // 0..1
+  value: number;
   label?: string;
   showPercent?: boolean;
   color?: "lime" | "green" | "cyan" | "pink";
@@ -12,17 +10,13 @@ interface ProgressBarProps {
 }
 
 const colorClasses = {
-  lime: "bg-neon-lime text-dark-bg",
-  green: "bg-neon-green text-dark-bg",
-  cyan: "bg-neon-cyan text-dark-bg",
-  pink: "bg-neon-pink text-dark-bg",
+  lime: "bg-lime-500",
+  green: "bg-green-500",
+  cyan: "bg-cyan-500",
+  pink: "bg-pink-500",
 };
 
-const heightClasses = {
-  sm: "h-2",
-  md: "h-3",
-  lg: "h-4",
-};
+const heightClasses = { sm: "h-2", md: "h-3", lg: "h-4" };
 
 export function ProgressBar({
   value,
@@ -33,21 +27,20 @@ export function ProgressBar({
   className = "",
 }: ProgressBarProps) {
   const clamped = Math.min(1, Math.max(0, value));
+  const pct = Math.round(clamped * 100);
 
   return (
     <div className={className}>
       {(label || showPercent) && (
-        <div className="mb-1 flex justify-between text-xs font-semibold uppercase tracking-wider text-dark-muted">
+        <div className="mb-1 flex justify-between text-xs text-gray-500">
           {label && <span>{label}</span>}
-          {showPercent && <span>{Math.round(clamped * 100)}%</span>}
+          {showPercent && <span>{pct}%</span>}
         </div>
       )}
-      <div className={`overflow-hidden rounded-full bg-dark-border ${heightClasses[height]}`}>
-        <motion.div
+      <div className={`overflow-hidden rounded-full bg-gray-800 ${heightClasses[height]}`}>
+        <div
           className={`rounded-full ${colorClasses[color]} ${heightClasses[height]}`}
-          initial={{ width: 0 }}
-          animate={{ width: `${clamped * 100}%` }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>

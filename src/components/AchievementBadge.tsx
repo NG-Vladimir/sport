@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import {
   Trophy,
   Flame,
@@ -46,32 +45,27 @@ export function AchievementBadge({
   const Icon = iconMap[icon] ?? Trophy;
 
   return (
-    <motion.div
-      className={`rounded-xl border bg-dark-card p-4 transition-colors ${
-        unlocked
-          ? "border-neon-lime/50 shadow-[0_0_20px_rgba(184,255,60,0.1)]"
-          : "border-dark-border opacity-60"
+    <div
+      className={`rounded-xl border bg-[#1a1a1a] p-4 ${
+        unlocked ? "border-lime-500/40 text-white" : "border-gray-800 text-gray-500"
       } ${className}`}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
     >
       <div className="flex items-start gap-3">
         <div
           className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${
-            unlocked ? "bg-neon-lime/20 text-neon-lime" : "bg-dark-muted text-dark-muted"
+            unlocked ? "bg-lime-500/20 text-lime-400" : "bg-gray-800 text-gray-500"
           }`}
         >
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className={`font-display font-bold ${unlocked ? "text-white" : "text-dark-muted"}`}>{name}</p>
-          <p className="mt-0.5 text-sm text-dark-muted">{description}</p>
+          <p className="font-semibold">{name}</p>
+          <p className="mt-0.5 text-sm text-gray-500">{description}</p>
           {unlocked && xpReward > 0 && (
-            <p className="mt-1 text-xs font-semibold text-neon-lime">+{xpReward} XP</p>
+            <p className="mt-1 text-xs font-medium text-lime-400">+{xpReward} XP</p>
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

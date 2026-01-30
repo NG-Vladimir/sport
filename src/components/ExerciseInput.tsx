@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { ExerciseType, ExerciseSet } from "@/types";
 
 const exerciseLabels: Record<ExerciseType, string> = {
@@ -13,7 +12,7 @@ const exerciseLabels: Record<ExerciseType, string> = {
 interface ExerciseInputProps {
   type: ExerciseType;
   sets: ExerciseSet[];
-  values: number[]; // reps per set
+  values: number[];
   onChange: (setIndex: number, reps: number) => void;
   disabled?: boolean;
   className?: string;
@@ -28,18 +27,12 @@ export function ExerciseInput({
   className = "",
 }: ExerciseInputProps) {
   return (
-    <motion.div
-      className={`rounded-xl border border-dark-border bg-dark-card p-4 ${className}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-    >
-      <h4 className="mb-3 font-display text-sm font-bold uppercase tracking-wider text-neon-lime">
-        {exerciseLabels[type]}
-      </h4>
-      <div className="flex flex-wrap gap-2">
+    <div className={`rounded-xl border border-gray-800 bg-[#1a1a1a] p-4 ${className}`}>
+      <h4 className="mb-3 text-sm font-semibold text-lime-400">{exerciseLabels[type]}</h4>
+      <div className="flex flex-wrap gap-3">
         {sets.map((set, i) => (
-          <div key={i} className="flex items-center gap-1">
-            <span className="text-xs text-dark-muted">×{i + 1}</span>
+          <div key={i} className="flex items-center gap-2">
+            <span className="text-xs text-gray-500">×{i + 1}</span>
             <input
               type="number"
               min={0}
@@ -47,12 +40,12 @@ export function ExerciseInput({
               value={values[i] ?? ""}
               onChange={(e) => onChange(i, parseInt(e.target.value, 10) || 0)}
               disabled={disabled}
-              className="h-10 w-16 rounded-lg border border-dark-border bg-dark-bg px-2 text-center font-bold text-white outline-none transition focus:border-neon-lime focus:ring-1 focus:ring-neon-lime"
+              className="h-12 w-20 rounded-lg border border-gray-700 bg-[#0f0f0f] px-2 text-center text-lg font-semibold text-white outline-none focus:border-lime-500"
             />
-            <span className="text-xs text-dark-muted">/ {set.targetReps}</span>
+            <span className="text-xs text-gray-500">/ {set.targetReps}</span>
           </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }

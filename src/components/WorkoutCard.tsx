@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Calendar, Target } from "lucide-react";
 import type { WorkoutDay as WorkoutDayType } from "@/types";
 
@@ -9,6 +8,13 @@ const focusLabels: Record<string, string> = {
   strength: "Сила",
   endurance: "Выносливость",
   explosive: "Взрывная",
+};
+
+const exLabels: Record<string, string> = {
+  pullups: "Подтягивания",
+  squats: "Приседания",
+  abs: "Пресс",
+  pushups: "Отжимания",
 };
 
 interface WorkoutCardProps {
@@ -21,81 +27,65 @@ interface WorkoutCardProps {
 }
 
 export function WorkoutCard({ workout, onStart, startHref, isToday, completed, className = "" }: WorkoutCardProps) {
-  const totalExercises = workout.exercises.length;
   const totalSets = workout.exercises.reduce((s, e) => s + e.sets.length, 0);
 
   return (
-    <motion.article
-      className={`rounded-2xl border border-dark-border bg-dark-card p-5 shadow-lg transition ${
-        isToday ? "border-neon-lime/50 shadow-[0_0_30px_rgba(184,255,60,0.15)]" : ""
-      } ${completed ? "opacity-80" : ""} ${className}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={!completed ? { scale: 1.01, boxShadow: "0 0 40px rgba(184,255,60,0.1)" } : undefined}
+    <article
+      className={`rounded-xl border border-gray-800 bg-[#1a1a1a] p-4 ${isToday ? "border-lime-500/50" : ""} ${
+        completed ? "opacity-75" : ""
+      } ${className}`}
     >
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-3 flex items-start justify-between">
         <div>
-          <p className="font-display text-lg font-bold text-white">
-            Тренировка {workout.dayNumber}
+          <p className="font-semibold text-white">
+            День {workout.dayNumber}
             {workout.isMaxCheck && (
-              <span className="ml-2 rounded bg-neon-pink/20 px-2 py-0.5 text-xs text-neon-pink">Макс</span>
+              <span className="ml-2 rounded bg-pink-500/20 px-1.5 py-0.5 text-xs text-pink-400">Макс</span>
             )}
           </p>
-          <p className="mt-1 flex items-center gap-1 text-sm text-dark-muted">
+          <p className="mt-0.5 flex items-center gap-1 text-sm text-gray-500">
             <Calendar className="h-4 w-4" />
             {workout.date}
           </p>
         </div>
-        {isToday && (
-          <span className="rounded-full bg-neon-lime/20 px-3 py-1 text-xs font-bold text-neon-lime">Сегодня</span>
-        )}
-        {completed && (
-          <span className="rounded-full bg-neon-green/20 px-3 py-1 text-xs font-bold text-neon-green">Готово</span>
-        )}
+        <div className="flex gap-1">
+          {isToday && <span className="rounded bg-lime-500/20 px-2 py-1 text-xs font-medium text-lime-400">Сегодня</span>}
+          {completed && <span className="rounded bg-green-500/20 px-2 py-1 text-xs font-medium text-green-400">Готово</span>}
+        </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
-        <span className="inline-flex items-center gap-1 rounded-lg bg-dark-bg px-2 py-1 text-xs font-semibold text-neon-lime">
-          <Target className="h-3 w-3" />
-          {focusLabels[workout.focus] ?? workout.focus}
-        </span>
-        <span className="rounded-lg bg-dark-bg px-2 py-1 text-xs text-dark-muted">
-          {totalExercises} упр. · {totalSets} подходов
-        </span>
-      </div>
+      <p className="mb-2 flex items-center gap-1 text-sm text-gray-400">
+        <Target className="h-4 w-4" />
+        {focusLabels[workout.focus] ?? workout.focus} · {totalSets} подходов
+      </p>
 
-      <ul className="space-y-1 text-sm text-dark-muted">
+      <ul className="mb-4 space-y-1 text-sm text-gray-500">
         {workout.exercises.map((ex) => (
           <li key={ex.type} className="flex justify-between">
-            <span>{ex.type === "pullups" ? "Подтягивания" : ex.type === "squats" ? "Приседания" : ex.type === "abs" ? "Пресс" : "Отжимания"}</span>
-            <span>
-              {ex.sets.map((s) => s.targetReps).join(" + ")} ({ex.sets.length} подх.)
-            </span>
+            <span>{exLabels[ex.type]}</span>
+            <span>{ex.sets.map((s) => s.targetReps).join(" + ")}</span>
           </li>
         ))}
       </ul>
 
       {(onStart || startHref) && !completed && (
         startHref ? (
-          <Link href={startHref} className="mt-4 block w-full">
-            <motion.span
-              className="block w-full rounded-xl bg-neon-lime py-3 text-center font-display font-bold text-dark-bg transition hover:bg-neon-lime/90"
-              whileTap={{ scale: 0.98 }}
-            >
-              Начать
-            </motion.span>
-          </Link>
-        ) : (
-          <motion.button
-            type="button"
-            onClick={onStart}
-            className="mt-4 w-full rounded-xl bg-neon-lime py-3 font-display font-bold text-dark-bg transition hover:bg-neon-lime/90"
-            whileTap={{ scale: 0.98 }}
+          <Link
+            href={startHref}
+            className="block w-full rounded-lg bg-lime-500 py-3 text-center font-semibold text-black"
           >
             Начать
-          </motion.button>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onStart}
+            className="w-full rounded-lg bg-lime-500 py-3 font-semibold text-black"
+          >
+            Начать
+          </button>
         )
       )}
-    </motion.article>
+    </article>
   );
 }

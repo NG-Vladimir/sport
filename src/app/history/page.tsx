@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from "date-fns";
 import { ru } from "date-fns/locale";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useProgress } from "@/context/ProgressContext";
 import { generate90DayPlan } from "@/lib/workoutPlan";
@@ -32,7 +31,7 @@ export default function HistoryPage() {
   if (!hydrated) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-2 border-neon-lime border-t-transparent" />
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-lime-500 border-t-transparent" />
       </div>
     );
   }
@@ -40,40 +39,34 @@ export default function HistoryPage() {
   const weekDays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-6"
-    >
+    <div className="space-y-6">
       <header>
-        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-white">
-          История
-        </h1>
-        <p className="mt-1 text-dark-muted">Календарь тренировок</p>
+        <h1 className="text-2xl font-bold text-white">История</h1>
+        <p className="mt-0.5 text-sm text-gray-500">Календарь тренировок</p>
       </header>
 
-      <div className="rounded-2xl border border-dark-border bg-dark-card p-4">
+      <div className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-4">
         <div className="mb-4 flex items-center justify-between">
           <button
             type="button"
             onClick={() => setMonth(subMonths(month, 1))}
-            className="rounded-lg p-2 text-dark-muted transition hover:bg-dark-bg hover:text-white"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-500 active:bg-gray-800"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-6 w-6" />
           </button>
-          <span className="font-display text-lg font-bold uppercase text-white">
+          <span className="text-lg font-semibold text-white">
             {format(month, "LLLL yyyy", { locale: ru })}
           </span>
           <button
             type="button"
             onClick={() => setMonth(addMonths(month, 1))}
-            className="rounded-lg p-2 text-dark-muted transition hover:bg-dark-bg hover:text-white"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-500 active:bg-gray-800"
           >
-            <ChevronRight className="h-5 w-5" />
+            <ChevronRight className="h-6 w-6" />
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold uppercase text-dark-muted">
+        <div className="grid grid-cols-7 gap-1 text-center text-xs font-medium text-gray-500">
           {weekDays.map((d) => (
             <div key={d}>{d}</div>
           ))}
@@ -91,34 +84,33 @@ export default function HistoryPage() {
             const isToday = isSameDay(day, new Date());
 
             return (
-              <motion.div
+              <div
                 key={dateStr}
-                className={`flex aspect-square items-center justify-center rounded-lg text-sm font-bold ${
-                  !isCurrentMonth ? "text-dark-muted/50" : ""
+                className={`flex aspect-square items-center justify-center rounded-lg text-sm font-medium ${
+                  !isCurrentMonth ? "text-gray-600" : ""
                 } ${
                   isCompleted
-                    ? "bg-neon-green/20 text-neon-green"
+                    ? "bg-green-500/20 text-green-400"
                     : isWorkoutDay
-                    ? "bg-dark-border text-white"
-                    : "text-dark-muted"
-                } ${isToday ? "ring-2 ring-neon-lime" : ""}`}
-                whileHover={{ scale: 1.05 }}
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-500"
+                } ${isToday ? "ring-2 ring-lime-500" : ""}`}
               >
                 {format(day, "d")}
-              </motion.div>
+              </div>
             );
           })}
         </div>
       </div>
 
-      <div className="flex gap-4 text-sm text-dark-muted">
+      <div className="flex flex-wrap gap-4 text-sm text-gray-500">
         <span className="flex items-center gap-2">
-          <span className="h-4 w-4 rounded bg-neon-green/20" /> Выполнено
+          <span className="h-3 w-3 rounded bg-green-500/30" /> Выполнено
         </span>
         <span className="flex items-center gap-2">
-          <span className="h-4 w-4 rounded bg-dark-border" /> День тренировки
+          <span className="h-3 w-3 rounded bg-gray-700" /> День тренировки
         </span>
       </div>
-    </motion.div>
+    </div>
   );
 }

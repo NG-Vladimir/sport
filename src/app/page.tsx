@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
 import { useProgress } from "@/context/ProgressContext";
 import { generate90DayPlan, getWorkoutForDate } from "@/lib/workoutPlan";
 import { WorkoutCard } from "@/components/WorkoutCard";
@@ -27,22 +26,18 @@ export default function DashboardPage() {
     const total = plan.length;
     const completed = plan.filter((w) => completedDates.has(w.date)).length;
     const percent = total ? (completed / total) * 100 : 0;
+    const now = new Date();
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - now.getDay() + 1);
     const workoutsThisWeek = plan.filter((w) => {
       const d = new Date(w.date);
-      const now = new Date();
-      const weekStart = new Date(now);
-      weekStart.setDate(now.getDate() - now.getDay() + 1);
       return d >= weekStart && d <= now;
     }).length;
-    const completedThisWeek = plan.filter(
-      (w) => completedDates.has(w.date) && (() => {
-        const d = new Date(w.date);
-        const now = new Date();
-        const weekStart = new Date(now);
-        weekStart.setDate(now.getDate() - now.getDay() + 1);
-        return d >= weekStart && d <= now;
-      })()
-    ).length;
+    const completedThisWeek = plan.filter((w) => {
+      if (!completedDates.has(w.date)) return false;
+      const d = new Date(w.date);
+      return d >= weekStart && d <= now;
+    }).length;
     const weekPercent = workoutsThisWeek ? (completedThisWeek / workoutsThisWeek) * 100 : 0;
     const achievementsTotal = 9;
     const achievementsUnlocked = progress?.unlockedAchievements?.length ?? 0;
@@ -57,32 +52,22 @@ export default function DashboardPage() {
   if (!hydrated || !progress) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <motion.div
-          className="h-12 w-12 rounded-full border-2 border-neon-lime border-t-transparent"
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-        />
+        <div className="h-10 w-10 animate-spin rounded-full border-2 border-lime-500 border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="space-y-8"
-    >
+    <div className="space-y-6">
       <header>
-        <h1 className="font-display text-3xl font-bold uppercase tracking-tight text-white">
-          Fit Track
-        </h1>
-        <p className="mt-1 text-dark-muted">90 дней прогресса</p>
+        <h1 className="text-2xl font-bold text-white">Fit Track</h1>
+        <p className="mt-0.5 text-sm text-gray-500">90 дней</p>
       </header>
 
-      <section className="rounded-2xl border border-dark-border bg-dark-card p-5">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="font-display text-sm font-bold uppercase text-neon-lime">Уровень</span>
-          <span className="font-display text-2xl font-bold text-white">LVL {progress.level}</span>
+      <section className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-sm font-medium text-gray-500">Уровень</span>
+          <span className="text-xl font-bold text-white">LVL {progress.level}</span>
         </div>
         <ProgressBar
           value={xpProgress?.progress ?? 0}
@@ -99,13 +84,11 @@ export default function DashboardPage() {
           planProgress.weekPercent,
           planProgress.achievementsPercent,
         ]}
-        labels={["План 90 дн.", "Неделя", "Достижения"]}
+        labels={["План", "Неделя", "Достижения"]}
       />
 
       <section>
-        <h2 className="mb-3 font-display text-lg font-bold uppercase tracking-wider text-white">
-          Сегодня
-        </h2>
+        <h2 className="mb-2 text-lg font-semibold text-white">Сегодня</h2>
         {todayWorkout ? (
           <WorkoutCard
             workout={todayWorkout}
@@ -114,44 +97,26 @@ export default function DashboardPage() {
             startHref={"/log?date=" + todayStr}
           />
         ) : (
-          <motion.div
-            className="rounded-2xl border border-dark-border bg-dark-card p-8 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <p className="text-dark-muted">Сегодня выходной. Следующая тренировка — в плане.</p>
-            <p className="mt-2 text-sm text-dark-muted">
-              Пн, Ср, Пт — тренировочные дни
-            </p>
-          </motion.div>
+          <div className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-6 text-center text-gray-500">
+            <p>Сегодня выходной.</p>
+            <p className="mt-1 text-sm">Пн, Ср, Пт — тренировки</p>
+          </div>
         )}
       </section>
 
       <section>
-        <h2 className="mb-3 font-display text-lg font-bold uppercase tracking-wider text-white">
-          Статистика
-        </h2>
+        <h2 className="mb-2 text-lg font-semibold text-white">Статистика</h2>
         <div className="grid grid-cols-2 gap-3">
-          <motion.div
-            className="rounded-xl border border-dark-border bg-dark-card p-4"
-            whileHover={{ scale: 1.02 }}
-          >
-            <p className="text-xs font-semibold uppercase text-dark-muted">Тренировок</p>
-            <p className="font-display text-2xl font-bold text-neon-lime">
-              {progress.completedWorkouts.length}
-            </p>
-          </motion.div>
-          <motion.div
-            className="rounded-xl border border-dark-border bg-dark-card p-4"
-            whileHover={{ scale: 1.02 }}
-          >
-            <p className="text-xs font-semibold uppercase text-dark-muted">Серия</p>
-            <p className="font-display text-2xl font-bold text-neon-green">
-              {progress.streakDays} дн.
-            </p>
-          </motion.div>
+          <div className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-4">
+            <p className="text-xs text-gray-500">Тренировок</p>
+            <p className="text-xl font-bold text-lime-400">{progress.completedWorkouts.length}</p>
+          </div>
+          <div className="rounded-xl border border-gray-800 bg-[#1a1a1a] p-4">
+            <p className="text-xs text-gray-500">Серия</p>
+            <p className="text-xl font-bold text-green-400">{progress.streakDays} дн.</p>
+          </div>
         </div>
       </section>
-    </motion.div>
+    </div>
   );
 }

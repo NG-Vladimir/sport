@@ -1,14 +1,8 @@
-import type { Metadata } from "next";
-import { Oswald, Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ProgressProvider } from "@/context/ProgressContext";
 import { Nav } from "@/components/Nav";
-
-const oswald = Oswald({
-  subsets: ["latin", "cyrillic"],
-  variable: "--font-display",
-  weight: ["400", "600", "700"],
-});
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -16,8 +10,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Fit Track — Тренировки на 90 дней",
-  description: "Адаптивная программа тренировок с прогрессией и геймификацией",
+  title: "Fit Track — Тренировки 90 дней",
+  description: "Программа тренировок на 90 дней. Сохраняй прогресс в телефоне.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#0f0f0f",
 };
 
 export default function RootLayout({
@@ -26,10 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={`${oswald.variable} ${inter.variable}`}>
-      <body className="antialiased">
+    <html lang="ru" className={inter.variable}>
+      <body className="min-h-screen bg-[#0f0f0f] text-gray-200 antialiased">
         <ProgressProvider>
-          <main className="mx-auto min-h-screen max-w-lg px-4 pb-24 pt-6">{children}</main>
+          <main className="mx-auto min-h-screen max-w-lg px-4 pb-20 pt-4">{children}</main>
           <Nav />
         </ProgressProvider>
       </body>
