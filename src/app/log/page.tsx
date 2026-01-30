@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { Suspense, useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
@@ -10,7 +10,7 @@ import { ExerciseInput } from "@/components/ExerciseInput";
 import { ProgressBar } from "@/components/ProgressBar";
 import type { ExerciseType, CompletedSet } from "@/types";
 
-export default function LogPage() {
+function LogContent() {
   const searchParams = useSearchParams();
   const dateParam = searchParams.get("date");
   const todayStr = format(new Date(), "yyyy-MM-dd");
@@ -163,5 +163,19 @@ export default function LogPage() {
         Сохранить тренировку
       </motion.button>
     </motion.div>
+  );
+}
+
+export default function LogPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="h-12 w-12 animate-spin rounded-full border-2 border-neon-lime border-t-transparent" />
+        </div>
+      }
+    >
+      <LogContent />
+    </Suspense>
   );
 }
