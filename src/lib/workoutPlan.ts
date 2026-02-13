@@ -4,7 +4,6 @@ import type { WorkoutDay, WorkoutExercise, ExerciseSet, UserMaxes, LoadType } fr
 const WORKOUT_WEEKDAYS = [1, 3, 5]; // Mon=1, Wed=3, Fri=5
 
 function getVolumeIncreaseForWeek(weekNumber: number): number {
-  // 2-5% per week, slightly lower in first month
   if (weekNumber <= 4) return 1.02;
   if (weekNumber <= 8) return 1.035;
   return 1.045;
@@ -29,7 +28,6 @@ function buildExerciseSets(
   loadType: LoadType,
   isMaxCheck: boolean
 ): ExerciseSet[] {
-  const multiplier = WORKOUT_WEEKDAYS.reduce((acc, _, i) => acc * getVolumeIncreaseForWeek(weekNumber), 1);
   const weeklyGrowth = Math.pow(getVolumeIncreaseForWeek(weekNumber), (weekNumber - 1));
   const volume = baseMax * weeklyGrowth;
 
@@ -37,7 +35,9 @@ function buildExerciseSets(
     return [{ targetReps: Math.min(roundReps(baseMax * 1.15), roundReps(volume * 0.4)), restSeconds: 180, loadType: "strength" }];
   }
 
-  const setCount = type === "pullups" ? 4 : 3;
+  // ВАЙБ-ПРАВКА: Теперь всегда 4 подхода для всех упражнений
+  const setCount = 4; 
+  
   const totalTarget = roundReps(volume * (loadType === "endurance" ? 1.2 : loadType === "explosive" ? 0.9 : 1));
   const repsPerSet = distributeSets(totalTarget, setCount);
 
@@ -122,7 +122,6 @@ export function getWorkoutForDate(plan: WorkoutDay[], dateStr: string): WorkoutD
 }
 
 export function getNextWorkoutDate(plan: WorkoutDay[], fromDateStr: string): string | null {
-  const from = new Date(fromDateStr);
   for (const w of plan) {
     if (w.date > fromDateStr) return w.date;
   }
