@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Calendar, Target } from "lucide-react";
+import { Calendar, Target, RotateCcw } from "lucide-react"; // Добавили иконку сброса
 import type { WorkoutDay as WorkoutDayType } from "@/types";
 
 const focusLabels: Record<string, string> = {
@@ -20,13 +20,23 @@ const exLabels: Record<string, string> = {
 interface WorkoutCardProps {
   workout: WorkoutDayType;
   onStart?: () => void;
+  onReset?: () => void; // Добавили функцию сброса
   startHref?: string;
   isToday?: boolean;
   completed?: boolean;
   className?: string;
 }
 
-export function WorkoutCard({ workout, onStart, startHref, isToday, completed, className = "" }: WorkoutCardProps) {
+export function WorkoutCard({ 
+  workout, 
+  onStart, 
+  onReset, // Проп для сброса
+  startHref, 
+  isToday, 
+  completed, 
+  className = "" 
+}: WorkoutCardProps) {
+  // Теперь считаем подходы (их будет 4, если в данных так прописано)
   const totalSets = workout.exercises.reduce((s, e) => s + e.sets.length, 0);
 
   return (
@@ -63,29 +73,44 @@ export function WorkoutCard({ workout, onStart, startHref, isToday, completed, c
         {workout.exercises.map((ex) => (
           <li key={ex.type} className="flex justify-between">
             <span>{exLabels[ex.type]}</span>
+            {/* Здесь будут отображаться все 4 подхода через + */}
             <span>{ex.sets.map((s) => s.targetReps).join(" + ")}</span>
           </li>
         ))}
       </ul>
 
-      {(onStart || startHref) && !completed && (
-        startHref ? (
-          <Link
-            href={startHref}
-            className="block w-full rounded-lg bg-lime-500 py-3 text-center font-semibold text-black"
-          >
-            Начать
-          </Link>
-        ) : (
+      <div className="flex gap-2">
+        {(onStart || startHref) && !completed && (
+          startHref ? (
+            <Link
+              href={startHref}
+              className="flex-1 block rounded-lg bg-lime-500 py-3 text-center font-semibold text-black hover:bg-lime-400 transition-colors"
+            >
+              Начать
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={onStart}
+              className="flex-1 rounded-lg bg-lime-500 py-3 font-semibold text-black hover:bg-lime-400 transition-colors"
+            >
+              Начать
+            </button>
+          )
+        )}
+
+        {/* Кнопка Сброса */}
+        {onReset && (
           <button
             type="button"
-            onClick={onStart}
-            className="w-full rounded-lg bg-lime-500 py-3 font-semibold text-black"
+            onClick={onReset}
+            className="flex items-center justify-center w-12 rounded-lg border border-gray-700 bg-transparent text-gray-400 hover:bg-red-500/10 hover:text-red-400 transition-all"
+            title="Сбросить прогресс"
           >
-            Начать
+            <RotateCcw className="h-5 w-5" />
           </button>
-        )
-      )}
+        )}
+      </div>
     </article>
   );
 }
