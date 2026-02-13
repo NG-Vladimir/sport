@@ -35,12 +35,20 @@ export function ExerciseInput({
             <span className="text-xs text-gray-500">×{i + 1}</span>
             <input
               type="number"
+              inputMode="numeric" // <-- Вот это заставит телефон показать только цифры
+              pattern="[0-9]*"    // <-- Дополнительная страховка для iOS
               min={0}
               max={999}
               value={values[i] ?? ""}
-              onChange={(e) => onChange(i, parseInt(e.target.value, 10) || 0)}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Позволяем вводить только целые числа
+                if (/^\d*$/.test(val)) {
+                  onChange(i, parseInt(val, 10) || 0);
+                }
+              }}
               disabled={disabled}
-              className="h-12 w-20 rounded-lg border border-gray-700 bg-[#0f0f0f] px-2 text-center text-lg font-semibold text-white outline-none focus:border-lime-500"
+              className="h-12 w-20 rounded-lg border border-gray-700 bg-[#0f0f0f] px-2 text-center text-lg font-semibold text-white outline-none focus:border-lime-500 transition-colors"
             />
             <span className="text-xs text-gray-500">/ {set.targetReps}</span>
           </div>
